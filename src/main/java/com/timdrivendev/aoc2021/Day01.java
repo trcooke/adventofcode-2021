@@ -49,7 +49,7 @@ public class Day01 {
     }
 
     private BufferedReader getInput(String inputFile) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = this.getClass().getClassLoader();
         InputStream is = classLoader.getResourceAsStream(inputFile);
         InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
         return new BufferedReader(isr);
