@@ -13,7 +13,7 @@ public class Day04 {
     int part1() throws IOException {
         BufferedReader reader = getInput("InputDay04");
         String calledNumbersStr = reader.readLine();
-        Queue<Integer> calledNumbers = Arrays.stream(calledNumbersStr.split(",")).map(Integer::parseInt).collect(Collectors.toCollection(ArrayDeque::new));
+        Queue<Integer> numbersToBeCalled = Arrays.stream(calledNumbersStr.split(",")).map(Integer::parseInt).collect(Collectors.toCollection(ArrayDeque::new));
         List<BingoBoard> boards = new ArrayList<>();
         List<List<Integer>> boardLines = new ArrayList<>();
         int boardLineCount = 0;
@@ -30,12 +30,13 @@ public class Day04 {
                 boardLineCount = 0;
             }
         }
-        while (!calledNumbers.isEmpty()) {
-            Integer lastCalledNumber = calledNumbers.poll();
+        List<Integer> calledNumbers = new ArrayList<>();
+        while (!numbersToBeCalled.isEmpty()) {
+            Integer lastCalledNumber = numbersToBeCalled.poll();
             for (BingoBoard board : boards) {
-                board.calledNumber(lastCalledNumber);
-                if (board.isWinner()) {
-                    return lastCalledNumber * board.uncalledNumbers().stream().reduce(Integer::sum).get();
+                calledNumbers.add(lastCalledNumber);
+                if (board.isWinner(calledNumbers)) {
+                    return lastCalledNumber * board.uncalledNumbers(calledNumbers).stream().reduce(Integer::sum).get();
                 }
             }
         }
@@ -45,7 +46,7 @@ public class Day04 {
     int part2() throws IOException {
         BufferedReader reader = getInput("InputDay04");
         String calledNumbersStr = reader.readLine();
-        Queue<Integer> calledNumbers = Arrays.stream(calledNumbersStr.split(",")).map(Integer::parseInt).collect(Collectors.toCollection(ArrayDeque::new));
+        Queue<Integer> numbersToBeCalled = Arrays.stream(calledNumbersStr.split(",")).map(Integer::parseInt).collect(Collectors.toCollection(ArrayDeque::new));
         List<BingoBoard> boards = new ArrayList<>();
         List<List<Integer>> boardLines = new ArrayList<>();
         int boardLineCount = 0;
@@ -62,19 +63,17 @@ public class Day04 {
                 boardLineCount = 0;
             }
         }
-        while (!calledNumbers.isEmpty()) {
-            Integer lastCalledNumber = calledNumbers.poll();
-            for (BingoBoard bingoBoard : boards) {
-                bingoBoard.calledNumber(lastCalledNumber);
-                boolean allBoardsWinners = true;
-                for (BingoBoard board1 : boards) {
-                    if (!board1.isWinner()) {
-                        allBoardsWinners = false;
-                        break;
+        List<Integer> calledNumbers = new ArrayList<>();
+        while (!numbersToBeCalled.isEmpty()) {
+            Integer lastCalledNumber = numbersToBeCalled.poll();
+            for (Iterator<BingoBoard> iterator = boards.iterator(); iterator.hasNext(); ) {
+                BingoBoard bingoBoard = iterator.next();
+                calledNumbers.add(lastCalledNumber);
+                if (bingoBoard.isWinner(calledNumbers)) {
+                    if (boards.size() == 1) {
+                        return lastCalledNumber * bingoBoard.uncalledNumbers(calledNumbers).stream().reduce(Integer::sum).get();
                     }
-                }
-                if (allBoardsWinners) {
-                    return lastCalledNumber * bingoBoard.uncalledNumbers().stream().reduce(Integer::sum).get();
+                    iterator.remove();
                 }
             }
         }
@@ -95,7 +94,6 @@ public class Day04 {
     }
 
     private class BingoBoard {
-        private List<Integer> calledNumbers = new ArrayList<>();
         private List<Integer> boardNumbers = new ArrayList<>();
         private List<List<Integer>> winningLines = new ArrayList<>();
 
@@ -113,11 +111,7 @@ public class Day04 {
             }
         }
 
-        public void calledNumber(Integer calledNumber) {
-            calledNumbers.add(calledNumber);
-        }
-
-        public boolean isWinner() {
+        public boolean isWinner(List<Integer> calledNumbers) {
             for (List<Integer> winningLine : winningLines) {
                 if (calledNumbers.containsAll(winningLine)) {
                     return true;
@@ -126,7 +120,7 @@ public class Day04 {
             return false;
         }
 
-        public List<Integer> uncalledNumbers() {
+        public List<Integer> uncalledNumbers(List<Integer> calledNumbers) {
             List<Integer> uncalledNumbers = new ArrayList<>(boardNumbers);
             uncalledNumbers.removeAll(calledNumbers);
             return uncalledNumbers;
