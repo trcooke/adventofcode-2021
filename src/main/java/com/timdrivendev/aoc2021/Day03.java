@@ -42,10 +42,45 @@ public class Day03 {
     }
 
     int part2() throws IOException {
-        BufferedReader reader = getInput("InputDay03Test");
+        BufferedReader reader = getInput("InputDay03");
+        List<String> input = new ArrayList<>();
         for (String line; (line = reader.readLine()) != null;) {
+            input.add(line);
         }
-        return 0;
+        int lineLen = input.get(0).length();
+        List<String> oxygenGeneratorRating = new ArrayList<>(input);
+        for (int i = 0; i < lineLen; i++) {
+            String mostCommon = mostCommonAt(oxygenGeneratorRating, i);
+            oxygenGeneratorRating = filterByCharAt(oxygenGeneratorRating, mostCommon, i);
+            if (oxygenGeneratorRating.size() == 1) {
+                break;
+            }
+        }
+        List<String> co2scrubberRating = new ArrayList<>(input);
+        for (int i = 0; i < lineLen; i++) {
+            String mostCommon = leastCommonAt(co2scrubberRating, i);
+            co2scrubberRating = filterByCharAt(co2scrubberRating, mostCommon, i);
+            if (co2scrubberRating.size() == 1) {
+                break;
+            }
+        }
+        return Integer.parseInt(oxygenGeneratorRating.get(0), 2) * Integer.parseInt(co2scrubberRating.get(0), 2);
+    }
+
+    private String mostCommonAt(List<String> input, final int i) {
+        int total = input.size();
+        long count = input.stream().filter(x -> "1".equals(String.valueOf(x.charAt(i)))).count();
+        return count >= (total - count) ? "1" : "0";
+    }
+
+    private String leastCommonAt(List<String> input, final int i) {
+        int total = input.size();
+        long count = input.stream().filter(x -> "1".equals(String.valueOf(x.charAt(i)))).count();
+        return count < (total - count) ? "1" : "0";
+    }
+
+    private List<String> filterByCharAt(List<String> oxygenGeneratorRating, String mostCommon, int i) {
+        return oxygenGeneratorRating.stream().filter(x -> mostCommon.equals(String.valueOf(x.charAt(i)))).collect(Collectors.toList());
     }
 
     private BufferedReader getInput(String inputFile) {
