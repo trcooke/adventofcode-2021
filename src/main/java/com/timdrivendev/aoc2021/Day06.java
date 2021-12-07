@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,6 +50,20 @@ public class Day06 {
         return lanternFishAges.values().stream().reduce(Long::sum).get();
     }
 
+    Long part2a() throws IOException {
+        BufferedReader reader = getInput("InputDay06");
+        long[] fish = {0L,0L,0L,0L,0L,0L,0L,0L,0L};
+        Arrays.stream(reader.readLine().split(",")).map(Integer::parseInt).forEach(x -> fish[x] = fish[x] + 1);
+        for (int i = 0; i < 256; i++) {
+            fish[index(i + 7)] = fish[index(i + 7)] + fish[index(i)];
+        }
+        return Arrays.stream(fish).reduce(0L, Long::sum);
+    }
+
+    private int index(int i) {
+        return i % 9;
+    }
+
     private BufferedReader getInput(String inputFile) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream is = classLoader.getResourceAsStream(inputFile);
@@ -58,6 +74,13 @@ public class Day06 {
     public static void main(String[] args) throws IOException {
         Day06 solution = new Day06();
         System.out.println(solution.part1());
+        Instant start = Instant.now();
         System.out.println(solution.part2());
+        Instant stop = Instant.now();
+        System.out.println(Duration.between(start, stop).toNanos());
+        start = Instant.now();
+        System.out.println(solution.part2a());
+        stop = Instant.now();
+        System.out.println(Duration.between(start, stop).toNanos());
     }
 }
