@@ -35,9 +35,7 @@ public class Day07 {
             int fuelCost = 0;
             for (Integer crabPosition : crabPositions) {
                 int steps = Math.abs(i - crabPosition);
-                for (int j = 1; j <= steps; j++) {
-                    fuelCost += j;
-                }
+                fuelCost += steps / 2.0 * (steps + 1);
             }
             if (fuelCost < leastFuelCost) {
                 leastFuelCost = fuelCost;

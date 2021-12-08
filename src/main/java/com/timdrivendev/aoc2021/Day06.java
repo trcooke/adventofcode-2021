@@ -53,7 +53,7 @@ public class Day06 {
     Long part2a() throws IOException {
         BufferedReader reader = getInput("InputDay06");
         long[] fish = {0L,0L,0L,0L,0L,0L,0L,0L,0L};
-        Arrays.stream(reader.readLine().split(",")).map(Integer::parseInt).forEach(x -> fish[x] = fish[x] + 1);
+        Arrays.stream(reader.readLine().split(",")).map(Integer::parseInt).forEach(x -> fish[x] += 1);
         for (int i = 0; i < 256; i++) {
             fish[index(i + 7)] = fish[index(i + 7)] + fish[index(i)];
         }
