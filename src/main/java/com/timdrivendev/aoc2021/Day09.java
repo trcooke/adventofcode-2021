@@ -57,9 +57,6 @@ public class Day09 {
         for (int row = 0; row < rowCount; row++) {
             for (int col = 0; col < colCount; col++) {
                 Point thisLocation = new Point(row, col);
-                if (visitedPoints.contains(thisLocation)) {
-                    continue;
-                }
                 basins.add(basinSize(thisLocation, visitedPoints, heightMap));
             }
         }
