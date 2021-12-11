@@ -56,7 +56,7 @@ public class Day11 {
     }
 
     int part2() throws IOException {
-        BufferedReader reader = getInput("InputDay11Test");
+        BufferedReader reader = getInput("InputDay11");
         Map<Point, Integer> octopusEnergyLevels = new HashMap<>();
         int lineNo = 0;
         for (String line; (line = reader.readLine()) != null;) {
@@ -67,21 +67,19 @@ public class Day11 {
             }
             lineNo++;
         }
-        int flashCount = 0;
-        int stepCount = 0;
-        boolean hasAllFlashed = false;
-        do  {
+        int stepNumber = 0;
+        boolean allFlashed = false;
+        do {
+            stepNumber++;
             Set<Point> flashedOctopuses = new HashSet<>();
             Map<Point, Integer> finalOctopusEnergyLevels = octopusEnergyLevels;
             octopusEnergyLevels.replaceAll((o, v) -> finalOctopusEnergyLevels.get(o) + 1);
             boolean checkForMoreFlashes;
             do {
-                hasAllFlashed = true;
                 Map<Point, Integer> nextOctopusEnergyLevels = octopusEnergyLevels;
                 checkForMoreFlashes = false;
                 for (Point octopus : octopusEnergyLevels.keySet()) {
                     if (octopusEnergyLevels.get(octopus) <= 9 || flashedOctopuses.contains(octopus)) {
-                        hasAllFlashed = false;
                         continue;
                     }
                     checkForMoreFlashes = true;
@@ -100,10 +98,11 @@ public class Day11 {
             for (Point flashedOctopus : flashedOctopuses) {
                 octopusEnergyLevels.put(flashedOctopus, 0);
             }
-            flashCount += flashedOctopuses.size();
-            stepCount++;
-        } while (!hasAllFlashed);
-        return stepCount;
+            if (flashedOctopuses.size() == 100) {
+                allFlashed = true;
+            }
+        } while (!allFlashed);
+        return stepNumber;
     }
 
     private class Point {
