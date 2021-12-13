@@ -72,11 +72,9 @@ public class Day11 {
         do {
             stepNumber++;
             Set<Point> flashedOctopuses = new HashSet<>();
-            Map<Point, Integer> finalOctopusEnergyLevels = octopusEnergyLevels;
-            octopusEnergyLevels.replaceAll((o, v) -> finalOctopusEnergyLevels.get(o) + 1);
+            octopusEnergyLevels.replaceAll((o, v) -> v + 1);
             boolean checkForMoreFlashes;
             do {
-                Map<Point, Integer> nextOctopusEnergyLevels = octopusEnergyLevels;
                 checkForMoreFlashes = false;
                 for (Point octopus : octopusEnergyLevels.keySet()) {
                     if (octopusEnergyLevels.get(octopus) <= 9 || flashedOctopuses.contains(octopus)) {
@@ -87,13 +85,12 @@ public class Day11 {
                     for (int dr = -1; dr <= 1; dr++) {
                         for (int dc = -1; dc <= 1; dc++) {
                             Point adjacentOctopus = new Point(octopus.row + dr, octopus.col + dc);
-                            if (nextOctopusEnergyLevels.get(adjacentOctopus) != null) {
-                                nextOctopusEnergyLevels.put(adjacentOctopus, nextOctopusEnergyLevels.get(adjacentOctopus) + 1);
+                            if (octopusEnergyLevels.get(adjacentOctopus) != null) {
+                                octopusEnergyLevels.put(adjacentOctopus, octopusEnergyLevels.get(adjacentOctopus) + 1);
                             }
                         }
                     }
                 }
-                octopusEnergyLevels = nextOctopusEnergyLevels;
             } while (checkForMoreFlashes);
             for (Point flashedOctopus : flashedOctopuses) {
                 octopusEnergyLevels.put(flashedOctopus, 0);
